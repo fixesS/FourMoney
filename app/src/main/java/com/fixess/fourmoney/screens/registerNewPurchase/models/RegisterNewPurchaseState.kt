@@ -20,9 +20,9 @@ enum class RegisterNewPurchaseSubState{
 @RequiresApi(Build.VERSION_CODES.O)
 data class RegisterNewPurchaseState (
     val registerNewPurchaseSubState: RegisterNewPurchaseSubState = RegisterNewPurchaseSubState.DatePicker,
-    val money: Float = 0f,
-    val date: LocalDate = LocalDate.now(),
-    val time: LocalTime = LocalTime.now(),
-    val timestamp : Timestamp = Timestamp.valueOf(LocalDateTime.now().toString()),
-    val type: Type = Type.defaultTag()
+    var money: Float = 0f,
+    var date: LocalDate = LocalDate.now(),
+    var time: LocalTime = LocalTime.now(),
+    var timestamp : String = "0",
+    var type: Type = Type.defaultTag()
 )

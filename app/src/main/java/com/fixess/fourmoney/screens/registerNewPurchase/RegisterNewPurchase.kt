@@ -198,9 +198,8 @@ fun RegisterNewPurchase(registerNewPurchaseModel: RegisterNewPurchaseModel, navC
                             RegisterNewPurchaseSubState.MoneyPicker -> Button(
                                 modifier = Modifier.fillMaxWidth().height(60.dp),
                                 onClick = {
-                                    navController.navigate(NavigationTree.Main.name) {
-                                        popUpTo(NavigationTree.Main.name) { inclusive = true }
-                                    }
+                                    navController.navigate(NavigationTree.Main.name) { popUpTo(NavigationTree.Main.name) { inclusive = true } }
+                                    registerNewPurchaseModel.obtainEvent(RegisterNewPurchaseEvent.savePurchase)
                                 }) {
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Text(
@@ -243,24 +242,32 @@ fun RegisterNewPurchase(registerNewPurchaseModel: RegisterNewPurchaseModel, navC
                 when (registerNewPurchaseSubState) {
                     RegisterNewPurchaseSubState.DatePicker -> {
                         datepicker { date ->
-                            Log.e("ДАТА ВЫБРАНА", date.year.toString())
+                            viewState.value.date = date
+                            Log.e("ДАТА ВЫБРАНА", viewState.value.date.toString())
                         }
                     }
                     RegisterNewPurchaseSubState.TimePicker -> {
                         timepicker { time ->
                             Log.e("ВРЕМЯ ВЫБРАНО", time.minute.toString())
+                            viewState.value.time = time
                         }
                     }
                     RegisterNewPurchaseSubState.TypePicker -> {
                         listItemsSingleChoice(
                             list = Type.getListOfTypes()
-                        ) { item ->
-                            Log.e("ТИП ВЫБРАН", item.toString())
+                        ) { typeId ->
+                            Log.e("ТИП ВЫБРАН", typeId.toString())
+                            viewState.value.type = Type.findById(typeId)
                         }
                     }
                     RegisterNewPurchaseSubState.MoneyPicker -> {
                         input(label = "Сумма", placeholder = "Например: 100") { inputString ->
                             Log.e("СУММА ВЫБРАНА", inputString)
+                            var money = inputString.toFloatOrNull()
+                            if(money == null){
+                                money = 0f
+                            }
+                            viewState.value.money = money
                         }
                     }
                 }
