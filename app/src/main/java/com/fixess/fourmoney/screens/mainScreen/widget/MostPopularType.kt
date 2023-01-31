@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,15 +17,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fixess.fourmoney.R
+import com.fixess.fourmoney.dataclasses.charts.Category
+import com.fixess.fourmoney.enums.Type
 
-@Preview(showBackground = true)
 @Composable
-fun MostPopularType(){
+fun MostPopularType(list : List<Category>){
+    var type : Type
+    try{
+        type = list[0].type
+    }catch (e : Exception){
+        type = Type.UNKNOWN
+    }
+    //var list1 by remember { mutableStateOf(list) }
     Card(backgroundColor = Color.White, elevation = 20.dp, shape = RoundedCornerShape(10.dp),modifier = Modifier.padding(5.dp)){
         Column(modifier = Modifier.padding(5.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Text(text = "Самый популярный тип трат:", fontSize = 14.sp, color = Color.DarkGray,textAlign = TextAlign.Center)
             Row(modifier = Modifier.padding(2.dp), horizontalArrangement = Arrangement.Center){
-                Image(painter = painterResource(id = R.drawable.petrol), contentDescription = "petrol",colorFilter = ColorFilter.tint(Color.Gray), contentScale = ContentScale.Crop, modifier = Modifier
+                Image(painter = painterResource(id = type.icon), contentDescription = "petrol",colorFilter = ColorFilter.tint(type.color), contentScale = ContentScale.Crop, modifier = Modifier
                     .width(50.dp)
                     .height(50.dp))
             }

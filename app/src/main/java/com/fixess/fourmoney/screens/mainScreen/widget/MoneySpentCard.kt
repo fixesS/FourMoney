@@ -1,6 +1,7 @@
-package com.fixess.testapp
+ package com.fixess.testapp
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -22,9 +23,11 @@ import com.fixess.fourmoney.R
 
 @Preview(showBackground = true)
 @Composable
-fun MoneySpentCard(initMoney: Int = 100){
-    var money by remember { mutableStateOf(0) }
-    val animatedMoney by animateIntAsState(targetValue = money)
+fun MoneySpentCard(initMoney: Float = 100f){
+    //var money by remember { mutableStateOf(initMoney) }
+    var color by remember { mutableStateOf(Color.White) }
+    val animatedMoney by animateFloatAsState(targetValue = initMoney)
+    val colorOfMoney by animateColorAsState(if(animatedMoney >= 0f && animatedMoney<5000) Color.Green else if(animatedMoney>=5000 && animatedMoney<10000) Color.Yellow else if (animatedMoney>=10000) Color.Red else Color.Blue )
     Card(backgroundColor = Color.White, elevation = 20.dp, shape = RoundedCornerShape(10.dp),modifier = Modifier.padding(5.dp)){
             Column(modifier = Modifier.padding(8.dp)) {
                 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier
@@ -35,8 +38,7 @@ fun MoneySpentCard(initMoney: Int = 100){
                         .height(40.dp))
                     Text("Денег потрачено",fontSize = 14.sp,color = Color.DarkGray, modifier = Modifier.align(Alignment.Bottom))
                 }
-
-                Text("$animatedMoney", fontSize = 30.sp, color = Color.Black, fontWeight = FontWeight.Bold)
+                Text("$animatedMoney", fontSize = 30.sp, color = colorOfMoney, fontWeight = FontWeight.Bold)
 
             }
 

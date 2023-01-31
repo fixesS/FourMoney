@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fixess.fourmoney.dataclasses.charts.Category
 import com.fixess.fourmoney.dataclasses.charts.PieChartSlice
 import com.fixess.fourmoney.enums.Type
 import me.bytebeats.views.charts.pie.PieChart
@@ -35,41 +36,32 @@ import me.bytebeats.views.charts.simpleChartAnimation
 
 @Preview(showBackground = true)
 @Composable
-fun ChartCard( list: List<PieChartSlice> = listOf(
-    PieChartSlice(Type.CLOTHES),
-    PieChartSlice(Type.FOOD),
-    PieChartSlice(Type.PETROL),
-    PieChartSlice(Type.HEALTH),
-    PieChartSlice(Type.RENT)
-),
+fun ChartCard(list: List<Category> = listOf(),
     onChartsClicked:() -> Unit = {}) {
-
-    var listOfSlices : MutableList<PieChartData.Slice> = ArrayList()
-
-
-
+    var listOfSlicesForUI : MutableList<PieChartData.Slice> = ArrayList()
+    var takenList = list.take(2).toMutableList()
     Card(elevation = 20.dp, shape = RoundedCornerShape(10.dp),modifier = Modifier.padding(5.dp).clickable(indication = null, interactionSource = MutableInteractionSource(), onClick = { onChartsClicked() })){
         Column(modifier = Modifier.padding(8.dp)) {
             Box(modifier = Modifier.height(80.dp)){
-                list.forEach {
-                    listOfSlices.add(PieChartData.Slice(it.weight,it.color))
+                takenList.forEach {
+                    listOfSlicesForUI.add(PieChartData.Slice(it.sumOfWeights,it.color))
                 }
                 PieChart(
-                    pieChartData = PieChartData(slices = listOfSlices),
+                    pieChartData = PieChartData(slices = listOfSlicesForUI),
                     animation = simpleChartAnimation(),
                     sliceDrawer = SimpleSliceDrawer()
                 )
             }
             LazyColumn{
-                itemsIndexed(list){ index,item ->
+                itemsIndexed(takenList){ index,item ->
                     Card(elevation = 3.dp, shape = RoundedCornerShape(10.dp),modifier = Modifier.padding(5.dp)){
                         Row(modifier = Modifier
                             .padding(3.dp)
                             .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                             Text(text = item.type.tag, fontSize = 15.sp)
-                            Text(text = item.weight.toString(), fontSize = 15.sp)
+                            Text(text = item.sumOfWeights.toString(), fontSize = 15.sp)
                             Box(modifier = Modifier.clip(RoundedCornerShape(10.dp))){
-                                Icon(painter = ColorPainter(item.color),contentDescription = "color of type",tint = item.color)
+                                Icon(painter = ColorPainter(item.color),contentDescription = "color of category",tint = item.color)
                             }
                         }
                     }

@@ -4,7 +4,7 @@ import com.fixess.fourmoney.database.entities.PurchaseEntity
 import com.fixess.fourmoney.dataclasses.charts.PieChartSlice
 import com.fixess.fourmoney.enums.Type
 
-class PurchaseEntityToPieChartSlice {
+class PurchaseEntityToPieChartSliceConverter {
     fun convert(entity: PurchaseEntity): PieChartSlice{
         val type : Type = Type.findById(entity.typeId!!)
         val slice = PieChartSlice(
