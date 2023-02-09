@@ -29,7 +29,7 @@ fun MoneySpentCard(initMoney: Float = 100f){
     var color by remember { mutableStateOf(Color.White) }
     val animatedMoney by animateIntAsState(targetValue = initMoney.toInt())
     val colorOfMoney by animateColorAsState(if(animatedMoney >= 0f && animatedMoney<5000) Color.Green else if(animatedMoney>=5000 && animatedMoney<10000) Color.Yellow else if (animatedMoney>=10000) Color.Red else Color.Blue )
-    Card(shape = MaterialTheme.shapes.large,modifier = Modifier.fillMaxWidth()){
+    Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
             Column(modifier = Modifier.padding(8.dp)) {
                 Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
                     .padding(1.dp).fillMaxWidth()){

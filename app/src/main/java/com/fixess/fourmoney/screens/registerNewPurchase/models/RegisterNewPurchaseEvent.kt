@@ -1,13 +1,20 @@
 package com.fixess.fourmoney.screens.registerNewPurchase.models
 
+import com.fixess.fourmoney.enums.Type
+import java.time.LocalDate
+
 sealed class RegisterNewPurchaseEvent{
-    object toTimePickerClicked: RegisterNewPurchaseEvent()
-    object toTypePickerClicked: RegisterNewPurchaseEvent()
-    object toMoneyPickerClicked: RegisterNewPurchaseEvent()
-    object backToDatePicker: RegisterNewPurchaseEvent()
-    object backToTimePicker: RegisterNewPurchaseEvent()
-    object backToTypePicker: RegisterNewPurchaseEvent()
-    object nextState : RegisterNewPurchaseEvent()
-    object previousState : RegisterNewPurchaseEvent()
+//    object toTimePickerClicked: RegisterNewPurchaseEvent()
+//    object toTypePickerClicked: RegisterNewPurchaseEvent()
+//    object toMoneyPickerClicked: RegisterNewPurchaseEvent()
+//    object backToDatePicker: RegisterNewPurchaseEvent()
+//    object backToTimePicker: RegisterNewPurchaseEvent()
+//    object backToTypePicker: RegisterNewPurchaseEvent()
+//    object nextState : RegisterNewPurchaseEvent()
+//    object previousState : RegisterNewPurchaseEvent()
+    data class saveMoney(val money: Float): RegisterNewPurchaseEvent()
+    data class saveDate(val date: LocalDate): RegisterNewPurchaseEvent()
+    data class saveType(val type:   Type): RegisterNewPurchaseEvent()
+    object setStatesToDefault : RegisterNewPurchaseEvent()
     object savePurchase: RegisterNewPurchaseEvent()
 }

@@ -10,11 +10,13 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.fixess.fourmoney.R
 import com.fixess.fourmoney.dataclasses.charts.Category
@@ -53,9 +55,18 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel,navController: NavContro
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet(){
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
-                        Text(text = "ХАЙ")
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
+                        IconButton(onClick = {
+                            scope.launch { drawerState.close() }
+                        },modifier = Modifier.weight(1f)) {
+                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(text= "Меню", fontWeight = FontWeight.Bold, fontSize = 20.sp,modifier = Modifier.weight(2f))
+                        Spacer(modifier = Modifier.weight(1f))
+
                     }
+                    Divider(modifier = Modifier.padding(horizontal = 10.dp))
                     items.forEach{menuItem ->
                         NavigationDrawerItem(
                             modifier = Modifier.padding(7.dp),
@@ -75,6 +86,7 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel,navController: NavContro
                                 }
                             })
                     }
+
                 }
             }
         ){
@@ -83,7 +95,13 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel,navController: NavContro
                 topBar = {
                      TopAppBar(
                          title = {
-                             Text(text = "FourMoney", fontWeight = FontWeight.Bold)
+                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                 Row(modifier = Modifier.fillMaxWidth()){
+                                     Spacer(modifier = Modifier.width(10.dp))
+                                     Text(text = "FourMoney", fontWeight = FontWeight.Bold)
+                                 }
+                                 Divider(modifier = Modifier.padding(horizontal = 10.dp))
+                             }
                          }
                      )
                 },
@@ -116,16 +134,23 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel,navController: NavContro
                         Column(modifier = Modifier
                             .padding(7.dp)
                             .fillMaxWidth(), verticalArrangement = Arrangement.Top) {
-                            Box(modifier = Modifier.padding(5.dp)){
-                                ChartCard(listOfCategories,onChartsClicked = {})
+                            Box(modifier = Modifier
+                                .padding(7.dp)
+                                .weight(3f)){
+                                ChartCard(listOfCategories)
                             }
                             mainScreenViewModel.obtainEvent(MainScreenEvent.FindMoneySpent)
-                            Box(modifier = Modifier.padding(5.dp)){
+                            Box(modifier = Modifier
+                                .padding(7.dp)
+                                .weight(2f)){
                                 MoneySpentCard(moneySpent)
                             }
-                            Box(modifier = Modifier.padding(5.dp)){
+                            Box(modifier = Modifier
+                                .padding(7.dp)
+                                .weight(2f)){
                                 MostPopularType(sortedListOfCategories)
                             }
+                            Spacer(modifier = Modifier.weight(4f))
                         }
                     }
 

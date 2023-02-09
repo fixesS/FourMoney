@@ -32,7 +32,7 @@ fun MostPopularType(list : List<Category>){
         type = Type.UNKNOWN
     }
     //var list1 by remember { mutableStateOf(list) }
-    Card(shape = MaterialTheme.shapes.large,modifier = Modifier){
+    Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
         Column(modifier = Modifier.padding(5.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Text(text = "Самый популярный тип трат:", fontSize = 18.sp,textAlign = TextAlign.Center)
             Row(modifier = Modifier.padding(2.dp), horizontalArrangement = Arrangement.Center){

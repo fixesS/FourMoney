@@ -30,13 +30,12 @@ import me.bytebeats.views.charts.simpleChartAnimation
 
 @Preview(showBackground = true)
 @Composable
-fun ChartCard(list: List<Category> = listOf(),
-    onChartsClicked:() -> Unit = {}) {
+fun ChartCard(list: List<Category> = listOf()) {
 
 
     var listOfSlicesForUI : MutableList<PieChartData.Slice> = ArrayList()
     var takenList = list.take(5).toMutableList()
-    Card(shape = MaterialTheme.shapes.large){
+    Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
             Box(modifier = Modifier.height(80.dp)){
                 Observable.fromArray(list).subscribe {

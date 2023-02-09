@@ -149,11 +149,11 @@ class ChartsViewModel @Inject constructor(): ViewModel(), EventHandler<ChartsEve
         _viewState.postValue(_viewState.value?.copy(selectedSlice = pieChartSlice,chartsSubState = ChartsSubState.Purchase))
     }
     fun deletePurchase(pieChartSlice: PieChartSlice){
-        //preformCharts()
         purchaseRepository.deletePurchase(PieChartSliceToPurchaseEntityConverter().convert(pieChartSlice))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe{
                 updateListsAndGoBack()
             }
+        preformCharts()
     }
 }
