@@ -8,6 +8,8 @@ class PurchaseEntityToPieChartSliceConverter {
     fun convert(entity: PurchaseEntity): PieChartSlice{
         val type : Type = Type.findById(entity.typeId!!)
         val slice = PieChartSlice(
+            id = entity.purchaseId,
+            timestamp = entity.timestamp!!,
             type = type,
             color = type.color,
             weight = entity.money!!

@@ -3,8 +3,10 @@ package com.fixess.testapp.screens.MainScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import com.fixess.fourmoney.R
 import com.fixess.fourmoney.dataclasses.charts.Category
 import com.fixess.fourmoney.enums.Type
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MostPopularType(list : List<Category>){
     var type : Type
@@ -29,11 +32,11 @@ fun MostPopularType(list : List<Category>){
         type = Type.UNKNOWN
     }
     //var list1 by remember { mutableStateOf(list) }
-    Card(backgroundColor = Color.White, elevation = 20.dp, shape = RoundedCornerShape(10.dp),modifier = Modifier.padding(5.dp)){
+    Card(shape = MaterialTheme.shapes.large,modifier = Modifier){
         Column(modifier = Modifier.padding(5.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
-            Text(text = "Самый популярный тип трат:", fontSize = 14.sp, color = Color.DarkGray,textAlign = TextAlign.Center)
+            Text(text = "Самый популярный тип трат:", fontSize = 18.sp,textAlign = TextAlign.Center)
             Row(modifier = Modifier.padding(2.dp), horizontalArrangement = Arrangement.Center){
-                Image(painter = painterResource(id = type.icon), contentDescription = "petrol",colorFilter = ColorFilter.tint(type.color), contentScale = ContentScale.Crop, modifier = Modifier
+                Image(painter = painterResource(id = type.icon), contentDescription = "icon",colorFilter = ColorFilter.tint(type.color), contentScale = ContentScale.Crop, modifier = Modifier
                     .width(50.dp)
                     .height(50.dp))
             }

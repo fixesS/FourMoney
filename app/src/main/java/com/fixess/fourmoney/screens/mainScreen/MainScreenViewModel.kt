@@ -30,6 +30,10 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
             MainScreenEvent.AddNewBuyClicked -> navigateRegisterNewBuy()
             MainScreenEvent.SetChartsSlices -> updateCategories()
             MainScreenEvent.FindMoneySpent -> sumMoney()
+            MainScreenEvent.SetSortedList -> updateSortedCategories()
+            MainScreenEvent.Initial -> {
+                updateLists()
+            }
         }
     }
 
@@ -44,36 +48,67 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
         }
         setTotalMoneySpent(sum)
     }
-    private fun sortCategories(){
-        val list = viewState.value!!.listOfCategories
-        Log.e("list2.1",list.toString())
-        val sortedList = list.sortedByDescending {
-            it.sumOfWeights
-            Log.e("it",it.toString())
-        }
-        Log.e("list2.2",sortedList.toString())
-        setSortedListOfCategories(sortedList)
-    }
-    private fun updateCategories(){
-        val sliceConverter  = PurchaseEntityToPieChartSliceConverter()
-        val categoryConverter  = ListOfSlicesToListOfCategoriesConverter()
-        val list : MutableList<PieChartSlice> = ArrayList()
+    private fun updateLists(){
+        var list : MutableList<PieChartSlice> = ArrayList()
         val dispode = purchaseRepository.getAllPurchases().subscribeOn(Schedulers.io()).observeOn(
             AndroidSchedulers.mainThread())
-            .subscribe({
+            .map {
+                list = ArrayList()
                 it.forEach {
-                    list.add(sliceConverter.convert(it))
+                    list.add(PurchaseEntityToPieChartSliceConverter().convert(it))
                 }
-                setListOfCategories(categoryConverter.convert(list))
+            }
+            .subscribe({
+                val listOfCategories = ListOfSlicesToListOfCategoriesConverter().convert(list)
+                var sum = 0f
+//                for(category in listOfCategories){
+//                    sum += category.sumOfWeights
+//                }
+                setListsAndMoney(listOfCategories,sum)
             },{
                 Log.e("Categories adding Error",it.toString())
             })
     }
+    private fun updateCategories(){
+        var list : MutableList<PieChartSlice> = ArrayList()
+        val dispode = purchaseRepository.getAllPurchases().subscribeOn(Schedulers.io()).observeOn(
+            AndroidSchedulers.mainThread())
+            .map {
+                list = ArrayList()
+                it.forEach {
+                    list.add(PurchaseEntityToPieChartSliceConverter().convert(it))
+                }
+            }
+            .subscribe({
+                setListOfCategories(ListOfSlicesToListOfCategoriesConverter().convert(list))
+            },{
+                Log.e("Categories adding Error",it.toString())
+            })
+    }
+    private fun updateSortedCategories(){
+        var list : MutableList<PieChartSlice> = ArrayList()
+        val dispode = purchaseRepository.getAllPurchases().subscribeOn(Schedulers.io()).observeOn(
+            AndroidSchedulers.mainThread())
+            .map {
+                list = ArrayList()
+                it.forEach {
+                    list.add(PurchaseEntityToPieChartSliceConverter().convert(it))
+                }
+            }
+            .subscribe({
+                setSortedListOfCategories(ListOfSlicesToListOfCategoriesConverter().convert(list))
+            },{
+                Log.e("Categories adding Error",it.toString())
+            })
+    }
+    private fun setListsAndMoney(list: List<Category>,moneySpent: Float){
+        _viewState.postValue(_viewState.value?.copy(listOfCategories = list, sortedListOfCategories = list.sortedByDescending { it.sumOfWeights }))
+    }
     private fun setListOfCategories(list: List<Category>){
         _viewState.postValue(_viewState.value?.copy(listOfCategories = list))
     }
-    private fun setSortedListOfCategories(sortedList: List<Category>){
-        _viewState.postValue(_viewState.value?.copy(sortedListOfCategories = sortedList))
+    private fun setSortedListOfCategories(list: List<Category>){
+        _viewState.postValue(_viewState.value?.copy(sortedListOfCategories = list.sortedByDescending { it.sumOfWeights }))
     }
     private fun setTotalMoneySpent(moneySpent :Float){
         _viewState.postValue(_viewState.value?.copy(totalMoneySpent = moneySpent))

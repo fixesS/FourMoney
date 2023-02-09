@@ -6,18 +6,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fixess.fourmoney.database.PurchaseRepository
 import com.fixess.fourmoney.navigation.NavigationTree
 import com.fixess.fourmoney.screens.charts.Charts
-import com.fixess.fourmoney.screens.charts.ChartsModel
+import com.fixess.fourmoney.screens.charts.ChartsViewModel
 import com.fixess.fourmoney.screens.charts.models.ChartsEvent
+import com.fixess.fourmoney.screens.donate.Donate
+import com.fixess.fourmoney.screens.donate.DonateViewModel
 import com.fixess.fourmoney.screens.mainScreen.MainScreenViewModel
 import com.fixess.fourmoney.screens.mainScreen.models.MainScreenEvent
 import com.fixess.fourmoney.screens.registerNewPurchase.RegisterNewPurchase
-import com.fixess.fourmoney.screens.registerNewPurchase.RegisterNewPurchaseModel
+import com.fixess.fourmoney.screens.registerNewPurchase.RegisterNewPurchaseViewModel
+import com.fixess.fourmoney.ui.theme.FourMoneyTheme
 import com.fixess.testapp.MainScreen
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,34 +41,41 @@ class MainActivity : ComponentActivity() {
         setContent {
             val  navController = rememberNavController()
 
-            NavHost(navController = navController, startDestination = NavigationTree.Main.name){
-                composable(NavigationTree.Main.name){
-                    val mainScreenViewModel : MainScreenViewModel by lazy {
-                        val viewModel : MainScreenViewModel  by viewModels()
-                        viewModel.purchaseRepository = purchaseRepository
-                        viewModel
-                    }
-                    mainScreenViewModel.obtainEvent(MainScreenEvent.SetChartsSlices)
-                    MainScreen(mainScreenViewModel = mainScreenViewModel, navController = navController)
+            FourMoneyTheme() {
+                NavHost(navController = navController, startDestination = NavigationTree.Main.name){
+                    composable(NavigationTree.Main.name){
+                        val mainScreenViewModel : MainScreenViewModel by lazy {
+                            val viewModel : MainScreenViewModel  by viewModels()
+                            viewModel.purchaseRepository = purchaseRepository
+                            viewModel
+                        }
+                        mainScreenViewModel.obtainEvent(MainScreenEvent.Initial)
+                        MainScreen(mainScreenViewModel = mainScreenViewModel, navController = navController)
 
-                }
-                composable(NavigationTree.RegisterNewPurchase.name){
-                    val registerNewPurchaseModel : RegisterNewPurchaseModel by lazy {
-                        val viewModel : RegisterNewPurchaseModel by viewModels()
-                        viewModel.purchaseRepository = purchaseRepository
-                        viewModel.gson = gson
-                        viewModel
                     }
-                    RegisterNewPurchase(registerNewPurchaseModel,navController)
-                }
-                composable(NavigationTree.Charts.name){
-                    val chartsModel : ChartsModel by lazy {
-                        val viewModel : ChartsModel by viewModels()
-                        viewModel.purchaseRepository = purchaseRepository
-                        viewModel
+                    composable(NavigationTree.RegisterNewPurchase.name){
+                        val registerNewPurchaseViewModel : RegisterNewPurchaseViewModel by lazy {
+                            val viewModel : RegisterNewPurchaseViewModel by viewModels()
+                            viewModel.purchaseRepository = purchaseRepository
+                            viewModel.gson = gson
+                            viewModel
+                        }
+                         RegisterNewPurchase(registerNewPurchaseViewModel,navController)
                     }
-                    chartsModel.obtainEvent(ChartsEvent.initial)
-                    Charts(chartsModel = chartsModel)
+                    composable(NavigationTree.Charts.name){
+                        val chartsViewModel : ChartsViewModel by lazy {
+                            val viewModel : ChartsViewModel by viewModels()
+                            viewModel.purchaseRepository = purchaseRepository
+                            viewModel.gson = gson
+                            viewModel
+                        }
+//                        chartsViewModel.obtainEvent(ChartsEvent.initial)
+                        Charts(chartsViewModel = chartsViewModel, navController = navController)
+                    }
+                    composable(NavigationTree.Donate.name){
+                        val donateViewModel  = hiltViewModel<DonateViewModel>()
+                        Donate(donateViewModel = donateViewModel)
+                    }
                 }
             }
         }

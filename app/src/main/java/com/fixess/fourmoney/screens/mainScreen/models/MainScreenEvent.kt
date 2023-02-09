@@ -4,4 +4,6 @@ sealed class MainScreenEvent{
     object AddNewBuyClicked: MainScreenEvent()
     object SetChartsSlices: MainScreenEvent()
     object FindMoneySpent: MainScreenEvent()
+    object SetSortedList: MainScreenEvent()
+    object  Initial: MainScreenEvent()
 }

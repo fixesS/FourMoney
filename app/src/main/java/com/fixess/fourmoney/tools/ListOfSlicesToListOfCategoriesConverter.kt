@@ -6,7 +6,7 @@ import com.fixess.fourmoney.enums.Type
 
 class ListOfSlicesToListOfCategoriesConverter {
     private var listOfCategories : MutableList<Category> = ArrayList()
-    fun convert(list: List<PieChartSlice>): List<Category>{
+    fun convert(list: MutableList<PieChartSlice>): MutableList<Category>{
         for(type in Type.values()){
             if(isTypeInList(type.id,list)){
                 listOfCategories.add(

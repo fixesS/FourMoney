@@ -1,7 +1,6 @@
 package com.fixess.fourmoney.screens.registerNewPurchase
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,21 +8,20 @@ import androidx.lifecycle.ViewModel
 import com.fixess.fourmoney.common.EventHandler
 import com.fixess.fourmoney.database.PurchaseRepository
 import com.fixess.fourmoney.database.entities.PurchaseEntity
+import com.fixess.fourmoney.enums.Type
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseEvent
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseState
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseSubState
 import com.google.gson.Gson
-import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-class RegisterNewPurchaseModel @Inject constructor(): ViewModel(), EventHandler<RegisterNewPurchaseEvent> {
+class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHandler<RegisterNewPurchaseEvent> {
 
     lateinit var purchaseRepository: PurchaseRepository
     lateinit var gson: Gson
@@ -46,11 +44,11 @@ class RegisterNewPurchaseModel @Inject constructor(): ViewModel(), EventHandler<
                         purchaseId = 0,
                         typeId = viewState.value?.type?.id,
                         money = viewState.value?.money,
-                        timestamp = gson.toJson(LocalDateTime.of(viewState.value?.date,viewState.value?.time).toString())
+                        timestamp = gson.toJson(viewState.value?.date,LocalDate::class.java)
                     )
                 ).subscribeOn(Schedulers.io()).subscribe()
 
-                preformDatePicker()
+                preformDatePickerAndNullStates()
             }
         }
     }
@@ -73,6 +71,9 @@ class RegisterNewPurchaseModel @Inject constructor(): ViewModel(), EventHandler<
     }
     private fun preformDatePicker(){
         _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.DatePicker))
+    }
+    private fun preformDatePickerAndNullStates(){
+        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.DatePicker, money = 0f,date = LocalDate.now(),time = LocalTime.now(), timestamp = "0",type = Type.UNKNOWN))
     }
     private fun preformTimePicker(){
         _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.TimePicker))
