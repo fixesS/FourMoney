@@ -6,7 +6,7 @@ import com.fixess.fourmoney.enums.Type
 
 class PurchaseEntityToPieChartSliceConverter {
     fun convert(entity: PurchaseEntity): PieChartSlice{
-        val type : Type = Type.findById(entity.typeId!!)
+        val type : Type = Type.getById(entity.typeId!!)
         val slice = PieChartSlice(
             id = entity.purchaseId,
             timestamp = entity.timestamp!!,

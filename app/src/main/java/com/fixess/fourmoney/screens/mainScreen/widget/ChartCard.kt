@@ -12,12 +12,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,18 +39,24 @@ fun ChartCard(list: List<Category> = listOf()) {
     var listOfSlicesForUI : MutableList<PieChartData.Slice> = ArrayList()
     var takenList = list.take(5).toMutableList()
     Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
-        Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
-            Box(modifier = Modifier.height(80.dp)){
-                Observable.fromArray(list).subscribe {
-                    list.forEach {
-                        listOfSlicesForUI.add(PieChartData.Slice(it.sumOfWeights,it.color))
+        Column(modifier = Modifier.padding(8.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            if(!list.isEmpty()){
+                Box(modifier = Modifier.height(80.dp)){
+                    Observable.fromArray(list).subscribe {
+                        list.forEach {
+                            listOfSlicesForUI.add(PieChartData.Slice(it.sumOfWeights,it.color))
+                        }
                     }
+                    PieChart(
+                        pieChartData = PieChartData(slices = listOfSlicesForUI),
+                        animation = simpleChartAnimation(),
+                        sliceDrawer = SimpleSliceDrawer()
+                    )
                 }
-                PieChart(
-                    pieChartData = PieChartData(slices = listOfSlicesForUI),
-                    animation = simpleChartAnimation(),
-                    sliceDrawer = SimpleSliceDrawer()
-                )
+            }else{
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Пока-что здесь ничего нет", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(5.dp), textAlign = TextAlign.Center)
+                Text(text = "Нажмите \"+\", чтобы добавить покупку ", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(5.dp), textAlign = TextAlign.Center)
             }
             LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
                 itemsIndexed(takenList){ index,item ->

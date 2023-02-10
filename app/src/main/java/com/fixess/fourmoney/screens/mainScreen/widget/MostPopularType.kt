@@ -34,7 +34,7 @@ fun MostPopularType(list : List<Category>){
     //var list1 by remember { mutableStateOf(list) }
     Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
         Column(modifier = Modifier.padding(5.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
-            Text(text = "Самый популярный тип трат:", fontSize = 18.sp,textAlign = TextAlign.Center)
+            Text(text = "Самый популярный тип трат:", fontSize = 20.sp,textAlign = TextAlign.Center)
             Row(modifier = Modifier.padding(2.dp), horizontalArrangement = Arrangement.Center){
                 Image(painter = painterResource(id = type.icon), contentDescription = "icon",colorFilter = ColorFilter.tint(type.color), contentScale = ContentScale.Crop, modifier = Modifier
                     .width(50.dp)

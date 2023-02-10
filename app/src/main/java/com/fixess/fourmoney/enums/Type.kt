@@ -25,7 +25,7 @@ enum class Type(val id:Int,val tag: String,val color:Color,val icon: Int) {
             }
             return type
         }
-        fun findById(id :Int ): Type {
+        fun getById(id :Int ): Type {
             var type : Type = OTHER
             values().map {
                 if(it.id == id){

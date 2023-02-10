@@ -9,6 +9,7 @@ import com.fixess.fourmoney.common.EventHandler
 import com.fixess.fourmoney.database.PurchaseRepository
 import com.fixess.fourmoney.database.entities.PurchaseEntity
 import com.fixess.fourmoney.enums.Type
+import com.fixess.fourmoney.screens.registerNewPurchase.models.DialogSubState
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseEvent
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseState
 import com.google.gson.Gson
@@ -27,14 +28,6 @@ class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHand
 
     override fun obtainEvent(event: RegisterNewPurchaseEvent) {
         when(event){
-//            RegisterNewPurchaseEvent.toTypePickerClicked -> preformTypePicker()
-//            RegisterNewPurchaseEvent.toTimePickerClicked -> preformTimePicker()
-//            RegisterNewPurchaseEvent.toMoneyPickerClicked -> preformMoneyPicker()
-//            RegisterNewPurchaseEvent.backToTimePicker -> preformTimePicker()
-//            RegisterNewPurchaseEvent.backToTypePicker -> preformTypePicker()
-//            RegisterNewPurchaseEvent.backToDatePicker -> preformDatePicker()
-//            RegisterNewPurchaseEvent.nextState -> nextState()
-//            RegisterNewPurchaseEvent.previousState -> previousState()
             RegisterNewPurchaseEvent.savePurchase ->{
                 purchaseRepository.addPurchase(
                     PurchaseEntity(
@@ -44,46 +37,37 @@ class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHand
                         timestamp = gson.toJson(viewState.value?.date,LocalDate::class.java)
                     )
                 ).subscribeOn(Schedulers.io()).subscribe()
-//                preformDatePickerAndNullStates()
             }
             is RegisterNewPurchaseEvent.saveMoney -> setMoney(event.money)
             is RegisterNewPurchaseEvent.saveDate -> setDate(event.date)
             is RegisterNewPurchaseEvent.saveType -> setType(event.type)
             RegisterNewPurchaseEvent.setStatesToDefault -> setDefaults()
+            RegisterNewPurchaseEvent.setSubStateNone -> setSubStateNone()
+            RegisterNewPurchaseEvent.setSubStateDate -> setSubStateDate()
+            RegisterNewPurchaseEvent.setSubStateType -> setSubStateType()
+            is RegisterNewPurchaseEvent.setSelectedTypeItem -> setSelectedItemType(event.index)
+            is RegisterNewPurchaseEvent.setSubStateNoneAndSaveType -> setSubStateNoneAndSaveType(event.type)
+            is RegisterNewPurchaseEvent.setSubStateNoneAndSaveDate -> setSubStateNoneAndSaveDate(event.date)
         }
     }
-
-//    private fun nextState(){
-//        when(viewState.value?.registerNewPurchaseSubState){
-//            RegisterNewPurchaseSubState.DatePicker -> preformTimePicker()
-//            RegisterNewPurchaseSubState.TimePicker -> preformTypePicker()
-//            RegisterNewPurchaseSubState.TypePicker -> preformMoneyPicker()
-//            else -> {}
-//        }
-//    }
-//    private fun previousState(){
-//        when(viewState.value?.registerNewPurchaseSubState){
-//            RegisterNewPurchaseSubState.TimePicker -> preformDatePicker()
-//            RegisterNewPurchaseSubState.TypePicker -> preformTimePicker()
-//            RegisterNewPurchaseSubState.MoneyPicker -> preformTypePicker()
-//            else -> {}
-//        }
-//    }
-//    private fun preformDatePicker(){
-//        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.DatePicker))
-//    }
-//    private fun preformDatePickerAndNullStates(){
-//        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.DatePicker, money = 0f,date = LocalDate.now(),time = LocalTime.now(), timestamp = "0",type = Type.UNKNOWN))
-//    }
-//    private fun preformTimePicker(){
-//        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.TimePicker))
-//    }
-//    private fun preformTypePicker(){
-//        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.TypePicker))
-//    }
-//    private fun preformMoneyPicker(){
-//        _viewState.postValue(_viewState.value?.copy(registerNewPurchaseSubState = RegisterNewPurchaseSubState.MoneyPicker))
-//    }
+    private fun setSelectedItemType(index: Int){
+        _viewState.postValue(_viewState.value?.copy(selectedTypeIndex = index))
+    }
+    private fun setSubStateNone(){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.None))
+    }
+    private fun setSubStateNoneAndSaveType(type: Type){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.None,type = type))
+    }
+    private fun setSubStateNoneAndSaveDate(date: LocalDate){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.None,date = date))
+    }
+    private fun setSubStateDate(){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.Date))
+    }
+    private fun setSubStateType(){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.Type))
+    }
     private fun setMoney(money: Float){
     _viewState.postValue(_viewState.value?.copy(money = money))
     }
@@ -94,6 +78,6 @@ class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHand
         _viewState.postValue(_viewState.value?.copy(type = type))
     }
     private fun setDefaults(){
-        _viewState.postValue(_viewState.value?.copy(type = Type.UNKNOWN, money = 0f, date = LocalDate.now()))
+        _viewState.postValue(_viewState.value?.copy(type = Type.UNKNOWN, money = 0f, date = LocalDate.now(), selectedTypeIndex = -1, dialogSubState = DialogSubState.None))
     }
 }

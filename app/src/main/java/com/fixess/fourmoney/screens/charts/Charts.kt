@@ -1,6 +1,7 @@
 package com.fixess.fourmoney.screens.charts
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.spring
@@ -52,59 +53,23 @@ fun Charts(chartsViewModel: ChartsViewModel, navController : NavController){
             chartsViewModel.obtainEvent(ChartsEvent.initial)
         }
         when(chartsSubState){
-
             ChartsSubState.CircleChart -> {
-
                 Surface{
                     Column(verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
-                        Crossfade(targetState = chartsViewState ){ state ->
-                            Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()){
-                                when(state){
-                                    ChartsViewState.Categories -> {
-                                        Button(shape = MaterialTheme.shapes.medium, modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(3.dp)
-                                            .height(60.dp), onClick = {
-                                            chartsViewModel.obtainEvent(ChartsEvent.toSlices)
-                                        }) {
-                                            Text(fontSize = 20.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                text = "К покупкам")
+                        TabRow(selectedTabIndex = chartsViewState.id) {
+                            ChartsViewState.getListOfViewStates().forEachIndexed{ index, title ->
+                                Tab(
+                                    selected = chartsViewState.id == index,
+                                    onClick = {
+                                        val state = ChartsViewState.getById(index)
+                                        Log.e("state",state.id.toString()+" - "+index.toString())
+                                        when(state){
+                                            ChartsViewState.Categories -> chartsViewModel.obtainEvent(ChartsEvent.toCategories)// Может показаться запутанном, но выбранно категории -> к категориям
+                                            ChartsViewState.Slices -> chartsViewModel.obtainEvent(ChartsEvent.toSlices)
                                         }
-                                    }
-                                    ChartsViewState.Slices -> {
-                                        Button(shape = MaterialTheme.shapes.medium, modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(3.dp)
-                                            .height(60.dp),onClick = {
-                                            chartsViewModel.obtainEvent(ChartsEvent.toCategories)
-                                        }) {
-                                            Text(fontSize = 20.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                text = "К категориям")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        Crossfade(targetState = chartsViewState , animationSpec = spring(4f)) { state ->
-                            when(state){
-                                ChartsViewState.Categories -> {
-                                    Text(
-                                        text = "Категории",
-                                        fontSize = 45.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                                ChartsViewState.Slices -> {
-                                    Text(
-                                        text = "Покупки",
-                                        fontSize = 45.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                                    },
+                                    text = { Text(text = title, fontSize =18.sp, fontWeight = FontWeight.Bold)}
+                                )
                             }
                         }
                         Box(modifier = Modifier

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.fixess.fourmoney.dataclasses.charts.PieChartSlice
 import com.fixess.fourmoney.screens.charts.ChartsViewModel
 import com.fixess.fourmoney.screens.charts.models.ChartsEvent
+import com.fixess.fourmoney.tools.IntMonthToStringMonthConverter
 import com.google.gson.Gson
 import java.time.LocalDate
 
@@ -68,9 +69,10 @@ fun PurchaseCard(chartsViewModel: ChartsViewModel = ChartsViewModel(), selectedS
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()){
+            Column(verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()){
                 Text(text = "Дата покупки", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(text = gson.fromJson(selectedSlice.timestamp,LocalDate::class.java).toString(), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                val date = gson.fromJson(selectedSlice.timestamp,LocalDate::class.java)
+                Text(text = "${date.dayOfMonth} ${IntMonthToStringMonthConverter().convert(date.monthValue)} ${date.year} года", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
                 Button(modifier = Modifier

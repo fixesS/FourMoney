@@ -25,18 +25,12 @@ import com.fixess.fourmoney.R
 @Preview(showBackground = true)
 @Composable
 fun MoneySpentCard(initMoney: Float = 100f){
-    //var money by remember { mutableStateOf(initMoney) }
-    var color by remember { mutableStateOf(Color.White) }
     val animatedMoney by animateIntAsState(targetValue = initMoney.toInt())
-    val colorOfMoney by animateColorAsState(if(animatedMoney >= 0f && animatedMoney<5000) Color.Green else if(animatedMoney>=5000 && animatedMoney<10000) Color.Yellow else if (animatedMoney>=10000) Color.Red else Color.Blue )
     Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxSize()){
             Column(modifier = Modifier.padding(8.dp)) {
                 Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
                     .padding(1.dp).fillMaxWidth()){
-                    Image(painter = painterResource(id = R.drawable.coin), contentDescription ="1" , colorFilter = ColorFilter.tint(colorOfMoney), contentScale = ContentScale.Crop, modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp))
-                    Text("Денег потрачено",fontSize = 18.sp, modifier = Modifier.align(Alignment.Bottom))
+                    Text("Денег потрачено",fontSize = 20.sp, modifier = Modifier.align(Alignment.Bottom))
                 }
                 Row(modifier = Modifier.padding(1.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Text("$animatedMoney", fontSize = 30.sp, fontWeight = FontWeight.Bold)
