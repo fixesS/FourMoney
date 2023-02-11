@@ -13,3 +13,17 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+settings.gradle
+gradle.bat
+gradlew
+gradle.properties
+build.gradle
+gradle/wrapper
+.idea
+.gradle
+.build
+/app/schemas
+/app/build
+/app/src/androidTest
+/app/src/test

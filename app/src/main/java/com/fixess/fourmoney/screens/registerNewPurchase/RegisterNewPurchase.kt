@@ -31,11 +31,6 @@ import com.fixess.fourmoney.screens.registerNewPurchase.widgets.DateDialog
 import com.fixess.fourmoney.screens.registerNewPurchase.widgets.ErrorDialog
 import com.fixess.fourmoney.screens.registerNewPurchase.widgets.TypeDialog
 import com.fixess.fourmoney.tools.IntMonthToStringMonthConverter
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
-import com.vanpra.composematerialdialogs.listItemsSingleChoice
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.util.*
 
 
@@ -60,14 +55,6 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                         .padding(3.dp)
                         .fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-//                    val dialogDate = MaterialDialog(LocalContext.current).datePicker{ dialog, datetime ->
-//                        val date11 = datetime.time.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-//                        Log.e("Date",date11.toString())
-//
-//                    }
-//                    val dialogType = MaterialDialog(LocalContext.current).listItemsSingleChoice(items = Type.getListOfTypes()) { dialog, index, text ->
-//                        Log.e("type", text.toString())
-//                    }
                     Text(text = "Введите данные о покупке", fontSize = 27.sp, fontWeight = FontWeight.Bold)
                     Column(modifier = Modifier.fillMaxWidth()){
                         OutlinedTextField(value = textFiledDate,
@@ -118,7 +105,6 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                     when(dialogSubState){
                         DialogSubState.None -> {}
                         DialogSubState.Date -> {
-                            //dialogStateDate.show()
                             DateDialog(
                                 onDismiss = {registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone)},
                                 onDateSelected = {
@@ -128,7 +114,6 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                             )
                         }
                         DialogSubState.Type -> {
-                            //dialogStateDate.hide()
                             TypeDialog(
                                 selectedIndex =  selectedTypeIndex,
                                 onPositiveButtonClicked = {
