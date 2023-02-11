@@ -13,15 +13,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fixess.fourmoney.database.PurchaseRepository
 import com.fixess.fourmoney.navigation.NavigationTree
-import com.fixess.fourmoney.screens.charts.Charts
-import com.fixess.fourmoney.screens.charts.ChartsViewModel
-import com.fixess.fourmoney.screens.charts.models.ChartsEvent
-import com.fixess.fourmoney.screens.donate.Donate
-import com.fixess.fourmoney.screens.donate.DonateViewModel
-import com.fixess.fourmoney.screens.mainScreen.MainScreenViewModel
-import com.fixess.fourmoney.screens.mainScreen.models.MainScreenEvent
-import com.fixess.fourmoney.screens.registerNewPurchase.RegisterNewPurchase
-import com.fixess.fourmoney.screens.registerNewPurchase.RegisterNewPurchaseViewModel
+import com.fixess.fourmoney.ui.screens.charts.Charts
+import com.fixess.fourmoney.ui.screens.charts.ChartsViewModel
+import com.fixess.fourmoney.ui.screens.donate.Donate
+import com.fixess.fourmoney.ui.screens.donate.DonateViewModel
+import com.fixess.fourmoney.ui.screens.mainScreen.MainScreenViewModel
+import com.fixess.fourmoney.ui.screens.mainScreen.models.MainScreenEvent
+import com.fixess.fourmoney.ui.screens.registerNewPurchase.RegisterNewPurchase
+import com.fixess.fourmoney.ui.screens.registerNewPurchase.RegisterNewPurchaseViewModel
 import com.fixess.fourmoney.ui.theme.FourMoneyTheme
 import com.fixess.testapp.MainScreen
 import com.google.gson.Gson
@@ -41,7 +40,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val  navController = rememberNavController()
-
             FourMoneyTheme() {
                 NavHost(navController = navController, startDestination = NavigationTree.Main.name){
                     composable(NavigationTree.Main.name){
@@ -70,7 +68,6 @@ class MainActivity : ComponentActivity() {
                             viewModel.gson = gson
                             viewModel
                         }
-//                        chartsViewModel.obtainEvent(ChartsEvent.initial)
                         Charts(chartsViewModel = chartsViewModel, navController = navController)
                     }
                     composable(NavigationTree.Donate.name){
