@@ -10,6 +10,7 @@ import com.fixess.fourmoney.dataclasses.charts.Category
 import com.fixess.fourmoney.dataclasses.charts.PieChartSlice
 import com.fixess.fourmoney.screens.mainScreen.models.MainScreenEvent
 import com.fixess.fourmoney.screens.mainScreen.models.MainScreenState
+import com.fixess.fourmoney.screens.mainScreen.models.MainScreenSubState
 import com.fixess.fourmoney.tools.ListOfSlicesToListOfCategoriesConverter
 import com.fixess.fourmoney.tools.PurchaseEntityToPieChartSliceConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,8 +32,11 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
             MainScreenEvent.SetChartsSlices -> updateCategories()
             MainScreenEvent.FindMoneySpent -> sumMoney()
             MainScreenEvent.SetSortedList -> updateSortedCategories()
+            MainScreenEvent.toLoading -> preformLoading()
+            MainScreenEvent.toMainSub -> preformMainSub()
+            MainScreenEvent.toNoPurchase -> preformNoPurchase()
             MainScreenEvent.Initial -> {
-                updateLists()
+                updateListsAndSubState()
             }
         }
     }
@@ -48,7 +52,7 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
         }
         setTotalMoneySpent(sum)
     }
-    private fun updateLists(){
+    private fun updateListsAndSubState(){
         var list : MutableList<PieChartSlice> = ArrayList()
         val dispode = purchaseRepository.getAllPurchases().subscribeOn(Schedulers.io()).observeOn(
             AndroidSchedulers.mainThread())
@@ -60,11 +64,14 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
             }
             .subscribe({
                 val listOfCategories = ListOfSlicesToListOfCategoriesConverter().convert(list)
-                var sum = 0f
-//                for(category in listOfCategories){
-//                    sum += category.sumOfWeights
-//                }
-                setListsAndMoney(listOfCategories,sum)
+                val sum = 0f
+                var state = MainScreenSubState.Loading
+                if(listOfCategories.isEmpty()){
+                    state = MainScreenSubState.NoPurchase
+                }else{
+                    state = MainScreenSubState.MainSubScreen
+                }
+                setListsAndSubState(listOfCategories,state)
             },{
                 Log.e("Categories adding Error",it.toString())
             })
@@ -101,8 +108,8 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
                 Log.e("Categories adding Error",it.toString())
             })
     }
-    private fun setListsAndMoney(list: List<Category>,moneySpent: Float){
-        _viewState.postValue(_viewState.value?.copy(listOfCategories = list, sortedListOfCategories = list.sortedByDescending { it.sumOfWeights }))
+    private fun setListsAndSubState(list: List<Category>,state: MainScreenSubState){
+        _viewState.postValue(_viewState.value?.copy(listOfCategories = list, sortedListOfCategories = list.sortedByDescending { it.sumOfWeights }, mainScreenSubState = state))
     }
     private fun setListOfCategories(list: List<Category>){
         _viewState.postValue(_viewState.value?.copy(listOfCategories = list))
@@ -112,5 +119,14 @@ class MainScreenViewModel @Inject constructor(): ViewModel(), EventHandler<MainS
     }
     private fun setTotalMoneySpent(moneySpent :Float){
         _viewState.postValue(_viewState.value?.copy(totalMoneySpent = moneySpent))
+    }
+    private fun preformLoading(){
+        _viewState.postValue(_viewState.value?.copy(mainScreenSubState = MainScreenSubState.Loading))
+    }
+    private fun preformMainSub(){
+        _viewState.postValue(_viewState.value?.copy(mainScreenSubState = MainScreenSubState.MainSubScreen))
+    }
+    private fun preformNoPurchase(){
+        _viewState.postValue(_viewState.value?.copy(mainScreenSubState = MainScreenSubState.NoPurchase))
     }
 }

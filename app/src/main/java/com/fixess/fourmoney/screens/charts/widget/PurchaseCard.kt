@@ -37,7 +37,12 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview
-fun PurchaseCard(chartsViewModel: ChartsViewModel = ChartsViewModel(), selectedSlice: PieChartSlice = PieChartSlice(), gson: Gson = Gson() ){
+fun PurchaseCard(
+    chartsViewModel: ChartsViewModel = ChartsViewModel(),
+    selectedSlice: PieChartSlice = PieChartSlice(),
+    gson: Gson = Gson(),
+    onDeletePurchase: (PieChartSlice) -> Unit
+){
     BackHandler(enabled = true) {
         chartsViewModel.obtainEvent(ChartsEvent.toCharts)
     }
@@ -78,7 +83,7 @@ fun PurchaseCard(chartsViewModel: ChartsViewModel = ChartsViewModel(), selectedS
                 Button(modifier = Modifier
                     .fillMaxWidth()
                     .padding(3.dp)
-                    .height(60.dp),colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),onClick = { chartsViewModel.deletePurchase(selectedSlice) }) {
+                    .height(60.dp),colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),onClick = { onDeletePurchase(selectedSlice) }) {
                     Row(){
                         Icon(Icons.Filled.Delete, contentDescription = "delete")
                         //Text(text = "Удалить")

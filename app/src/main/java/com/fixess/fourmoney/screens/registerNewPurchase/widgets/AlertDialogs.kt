@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fixess.fourmoney.enums.Type
@@ -27,31 +28,31 @@ import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TypeDialog(
-    registerNewPurchaseViewModel: RegisterNewPurchaseViewModel,
     selectedIndex: Int,
-    onPositiveButtonClicked: (Type) -> Unit){
+    onPositiveButtonClicked: (Type) -> Unit,
+    onSelectItem: (Int) -> Unit,
+    onDismiss: () -> Unit
+){
     AlertDialog(
-        onDismissRequest = { registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone) },
+        onDismissRequest = { onDismiss() },
         title = {
             Text(text = "Выберите категорию")
         },
         text = {
             LazyColumn{
                 itemsIndexed(Type.getListOfTypes()){ index, it ->
-                    TypeDialogItem(text = it,index = index, selectedIndex = selectedIndex, registerNewPurchaseViewModel = registerNewPurchaseViewModel)
+                    TypeDialogItem(text = it,index = index, selectedIndex = selectedIndex, onSelectItem = { onSelectItem(it) })
                 }
             }
         },
         dismissButton = {
-            Button(onClick = { registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone) }) {
+            Button(onClick = { onDismiss() }) {
                 Text(text = "Отмена")
             }
         },
         confirmButton = {
             Button(onClick = {
-                val type = Type.getById(selectedIndex)
-                Log.e("type",type.toString())
-                registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNoneAndSaveType(type))
+                val type = Type.getByIndex(selectedIndex)
                 onPositiveButtonClicked(type)
             }) {
                 Text(text = "Ок")
@@ -65,7 +66,7 @@ fun TypeDialogItem(
     text : String,
     selectedIndex: Int,
     index: Int,
-    registerNewPurchaseViewModel: RegisterNewPurchaseViewModel
+    onSelectItem: (Int) -> Unit
 ){
 
     var selected by remember { mutableStateOf(false) }
@@ -76,11 +77,7 @@ fun TypeDialogItem(
         .padding(3.dp)
         .clip(MaterialTheme.shapes.large)
         .clickable {
-            registerNewPurchaseViewModel.obtainEvent(
-                RegisterNewPurchaseEvent.setSelectedTypeItem(
-                    index
-                )
-            )
+            onSelectItem(index)
         }){
         Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
             RadioButton(selected = selected, onClick = {})
@@ -95,13 +92,14 @@ fun TypeDialogItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateDialog(
-    registerNewPurchaseViewModel: RegisterNewPurchaseViewModel,
-    onDateSelected: (LocalDate) -> Unit,
+    onDismiss:() -> Unit,
+    onDateSelected: (LocalDate) -> Unit
+
 ){
     var datePickerState = rememberDatePickerState(initialSelectedDateMillis = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
     AlertDialog(
         onDismissRequest = {
-            registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone)
+            onDismiss()
         },
         title = {
         },
@@ -113,12 +111,12 @@ fun DateDialog(
                     Text(text = "${date.dayOfMonth} ${IntMonthToStringMonthConverter().convert(date.monthValue)} ${date.year} года", fontSize = 15.sp)
                 },
                 title = {
-                    Text(text = "Выберите дату покупки")
+                    Text(text = "Выберите дату покупки", fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                 }
             )
         },
         dismissButton = {
-            Button(onClick = { registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone) }) {
+            Button(onClick = { onDismiss() }) {
                 Text(text = "Отмена")
             }
         },
@@ -126,8 +124,28 @@ fun DateDialog(
             Button(onClick = {
                 val date = MillisecondsToDateConverter().convert(datePickerState.selectedDateMillis)
                 onDateSelected(date)
-                registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNoneAndSaveDate(date))
             }) {
+                Text(text = "Ок")
+            }
+        }
+    )
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ErrorDialog(onDismiss:() -> Unit){
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(text = "Ошибка")
+        },
+        text ={
+            Text(text = "Укажите категорию покупки", fontSize = 20.sp)
+        },
+        dismissButton = {
+
+        },
+        confirmButton = {
+            Button(onClick = { onDismiss() }) {
                 Text(text = "Ок")
             }
         }

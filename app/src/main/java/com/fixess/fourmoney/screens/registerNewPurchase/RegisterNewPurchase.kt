@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.fixess.fourmoney.enums.Type
 import com.fixess.fourmoney.navigation.NavigationTree
 import com.fixess.fourmoney.screens.registerNewPurchase.models.DialogSubState
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseEvent
 import com.fixess.fourmoney.screens.registerNewPurchase.models.RegisterNewPurchaseState
 import com.fixess.fourmoney.screens.registerNewPurchase.widgets.DateDialog
+import com.fixess.fourmoney.screens.registerNewPurchase.widgets.ErrorDialog
 import com.fixess.fourmoney.screens.registerNewPurchase.widgets.TypeDialog
 import com.fixess.fourmoney.tools.IntMonthToStringMonthConverter
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -42,8 +44,6 @@ import java.util.*
 @Composable
 fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewModel, navController: NavController) {
     val viewState = registerNewPurchaseViewModel.viewState.observeAsState(RegisterNewPurchaseState())
-    val dialogStateDate = rememberMaterialDialogState()
-    //val dialogStateType = rememberMaterialDialogState()
     var textFiledDate by remember { mutableStateOf(TextFieldValue("")) }
     var textFiledType by remember { mutableStateOf(TextFieldValue("")) }
     var textFiledMoney by remember { mutableStateOf(TextFieldValue("")) }
@@ -70,7 +70,7 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
 //                    }
                     Text(text = "Введите данные о покупке", fontSize = 27.sp, fontWeight = FontWeight.Bold)
                     Column(modifier = Modifier.fillMaxWidth()){
-                        TextField(value = textFiledDate,
+                        OutlinedTextField(value = textFiledDate,
                             placeholder = {Text("Нажмите, чтобы выбрать дату")},
                             onValueChange = {date -> textFiledDate = date},
                             enabled = false,
@@ -83,7 +83,7 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                                     )
                                 }
                         )
-                        TextField(value = textFiledType,
+                        OutlinedTextField(value = textFiledType,
                             placeholder = {Text("Нажмите, чтобы выбрать категорию")},
                             onValueChange = {type -> textFiledType = type},
                             enabled = false,
@@ -96,7 +96,7 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                                     )
                                 }
                         )
-                        TextField(value = textFiledMoney,
+                        OutlinedTextField(value = textFiledMoney,
                             label = {Text("Нажмите, чтобы вписать сумму")},
                             onValueChange = {money ->
                                 textFiledMoney = money
@@ -118,22 +118,30 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                     when(dialogSubState){
                         DialogSubState.None -> {}
                         DialogSubState.Date -> {
-                            dialogStateDate.show()
+                            //dialogStateDate.show()
                             DateDialog(
-                                registerNewPurchaseViewModel = registerNewPurchaseViewModel,
+                                onDismiss = {registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone)},
                                 onDateSelected = {
+                                    registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNoneAndSaveDate(it))
                                     textFiledDate = TextFieldValue("${it.dayOfMonth} ${IntMonthToStringMonthConverter().convert(it.monthValue)} ${it.year} года")
                                 }
                             )
                         }
                         DialogSubState.Type -> {
-                            dialogStateDate.hide()
+                            //dialogStateDate.hide()
                             TypeDialog(
-                            registerNewPurchaseViewModel = registerNewPurchaseViewModel,
-                            selectedIndex =  selectedTypeIndex,
-                            onPositiveButtonClicked = {
-                            textFiledType = TextFieldValue(it.tag)
-                            })
+                                selectedIndex =  selectedTypeIndex,
+                                onPositiveButtonClicked = {
+                                    textFiledType = TextFieldValue(it.tag)
+                                    registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNoneAndSaveType(it))},
+                                onSelectItem = {registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSelectedTypeItem(it))},
+                                onDismiss = {registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone)}
+                            )
+                        }
+                        DialogSubState.Error ->{
+                            ErrorDialog(
+                                onDismiss = {registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateNone)}
+                            )
                         }
                     }
                     Button(
@@ -142,8 +150,12 @@ fun RegisterNewPurchase(registerNewPurchaseViewModel: RegisterNewPurchaseViewMod
                             .padding(3.dp)
                             .height(60.dp),
                         onClick = {
-                            navController.navigate(NavigationTree.Main.name) { popUpTo(NavigationTree.Main.name) { inclusive = true } }
-                            registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.savePurchase)
+                            if(registerNewPurchaseViewModel.viewState.value!!.type == Type.UNKNOWN){
+                                registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.setSubStateError)
+                            }else{
+                                navController.navigate(NavigationTree.Main.name) { popUpTo(NavigationTree.Main.name) { inclusive = true } }
+                                registerNewPurchaseViewModel.obtainEvent(RegisterNewPurchaseEvent.savePurchase)
+                            }
                         },
                         content = {
                             Row(verticalAlignment = Alignment.CenterVertically){

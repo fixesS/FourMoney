@@ -9,12 +9,12 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 enum class DialogSubState{
-    Date,Type,None
+    Date,Type,None,Error
 }
 @RequiresApi(Build.VERSION_CODES.O)
 data class RegisterNewPurchaseState (
     var dialogSubState: DialogSubState = DialogSubState.None,
-    var selectedTypeIndex : Int = -1,
+    var selectedTypeIndex : Int = -2,
     var money: Float = 0f,
     var date: LocalDate = LocalDate.now(),
     var time: LocalTime = LocalTime.now(),

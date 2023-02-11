@@ -17,7 +17,7 @@ enum class Type(val id:Int,val tag: String,val color:Color,val icon: Int) {
 
     companion object {
         fun findByTag(tag :String ): Type {
-            var type : Type = OTHER
+            var type : Type = UNKNOWN
             values().map {
                 if(it.tag == tag){
                     type = it
@@ -25,11 +25,20 @@ enum class Type(val id:Int,val tag: String,val color:Color,val icon: Int) {
             }
             return type
         }
-        fun getById(id :Int ): Type {
-            var type : Type = OTHER
-            values().map {
-                if(it.id == id){
-                    type = it
+        fun getById(id :Int ): Type { // gets type by id value in type object
+            var type : Type = UNKNOWN
+            values().forEach{ indexedType ->
+                if(indexedType.id == id){
+                    type = indexedType
+                }
+            }
+            return type
+        }
+        fun getByIndex(index :Int ): Type {// gets type by index in enum
+            var type : Type = UNKNOWN
+            values().forEachIndexed{ indexOfType, indexedType ->
+                if(indexOfType == index){
+                    type = indexedType
                 }
             }
             return type

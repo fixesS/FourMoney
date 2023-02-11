@@ -45,6 +45,7 @@ class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHand
             RegisterNewPurchaseEvent.setSubStateNone -> setSubStateNone()
             RegisterNewPurchaseEvent.setSubStateDate -> setSubStateDate()
             RegisterNewPurchaseEvent.setSubStateType -> setSubStateType()
+            RegisterNewPurchaseEvent.setSubStateError -> setSubStateError()
             is RegisterNewPurchaseEvent.setSelectedTypeItem -> setSelectedItemType(event.index)
             is RegisterNewPurchaseEvent.setSubStateNoneAndSaveType -> setSubStateNoneAndSaveType(event.type)
             is RegisterNewPurchaseEvent.setSubStateNoneAndSaveDate -> setSubStateNoneAndSaveDate(event.date)
@@ -67,6 +68,9 @@ class RegisterNewPurchaseViewModel @Inject constructor(): ViewModel(), EventHand
     }
     private fun setSubStateType(){
         _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.Type))
+    }
+    private fun setSubStateError(){
+        _viewState.postValue(_viewState.value?.copy(dialogSubState = DialogSubState.Error))
     }
     private fun setMoney(money: Float){
     _viewState.postValue(_viewState.value?.copy(money = money))

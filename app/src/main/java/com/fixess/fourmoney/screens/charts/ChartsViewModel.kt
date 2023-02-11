@@ -39,6 +39,9 @@ class ChartsViewModel @Inject constructor(): ViewModel(), EventHandler<ChartsEve
             ChartsEvent.toPurchase -> preformPurchaseCard()
             ChartsEvent.toCharts -> preformCharts()
             ChartsEvent.toCategory -> preformCategoryCard()
+            is ChartsEvent.setSelectedCategory -> setSelectedCategory(event.category)
+            is ChartsEvent.setSelectedPurchase -> setSelectedPurchase(event.purchase)
+            is ChartsEvent.deletePurchase -> deletePurchase(event.purchase)
         }
     }
     private fun updateLists(){
@@ -47,12 +50,9 @@ class ChartsViewModel @Inject constructor(): ViewModel(), EventHandler<ChartsEve
             AndroidSchedulers.mainThread())
             .map {
                 list = ArrayList()
-                Log.e("list ",list.toString())
-                Log.e("list it ",it.toString())
                 it.forEach {
                     list.add(PurchaseEntityToPieChartSliceConverter().convert(it))
                 }
-                Log.e("list it list",list.toString())
             }
             .subscribe({
                 setLists(list)
@@ -112,19 +112,15 @@ class ChartsViewModel @Inject constructor(): ViewModel(), EventHandler<ChartsEve
         _viewState.postValue(_viewState.value!!.copy(listOfSlices = ArrayList(), listOfCategories = ArrayList()))
     }
     private fun setLists(list: MutableList<PieChartSlice>){
-        Log.e("setLists",list.toString())
         _viewState.postValue(_viewState.value!!.copy(listOfSlices = list, listOfCategories = ListOfSlicesToListOfCategoriesConverter().convert(list)))
     }
     private fun setListsAndSubState(list: MutableList<PieChartSlice>){
-        Log.e("setListsAndSubState",list.toString())
         _viewState.postValue(_viewState.value!!.copy(chartsSubState = ChartsSubState.CircleChart,listOfSlices = list, listOfCategories = ListOfSlicesToListOfCategoriesConverter().convert(list)))
     }
     private fun setListOfSlices(list: MutableList<PieChartSlice>){
-        Log.e("setSlices",list.toString())
         _viewState.postValue(_viewState.value!!.copy(listOfSlices = list))
     }
     private fun setListOfCategories(list: MutableList<Category>){
-        Log.e("setCategories",list.toString())
         _viewState.postValue(_viewState.value!!.copy(listOfCategories = list))
     }
     private fun setStateToCategories(){
@@ -142,13 +138,13 @@ class ChartsViewModel @Inject constructor(): ViewModel(), EventHandler<ChartsEve
     private fun preformCharts(){
         _viewState.postValue(_viewState.value?.copy(chartsSubState = ChartsSubState.CircleChart))
     }
-    fun setSelecterCategory(category: Category){
+    private fun setSelectedCategory(category: Category){
         _viewState.postValue(_viewState.value?.copy(selectedCategory = category,chartsSubState = ChartsSubState.Category))
     }
-    fun setSelecterPurchase(pieChartSlice: PieChartSlice){
+    private fun setSelectedPurchase(pieChartSlice: PieChartSlice){
         _viewState.postValue(_viewState.value?.copy(selectedSlice = pieChartSlice,chartsSubState = ChartsSubState.Purchase))
     }
-    fun deletePurchase(pieChartSlice: PieChartSlice){
+    private fun deletePurchase(pieChartSlice: PieChartSlice){
         purchaseRepository.deletePurchase(PieChartSliceToPurchaseEntityConverter().convert(pieChartSlice))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe{

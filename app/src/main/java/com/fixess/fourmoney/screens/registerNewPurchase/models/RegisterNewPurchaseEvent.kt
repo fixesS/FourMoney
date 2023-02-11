@@ -16,6 +16,7 @@ sealed class RegisterNewPurchaseEvent{
     object setSubStateNone : RegisterNewPurchaseEvent()
     object setSubStateDate : RegisterNewPurchaseEvent()
     object setSubStateType : RegisterNewPurchaseEvent()
+    object setSubStateError : RegisterNewPurchaseEvent()
 
     data class setSubStateNoneAndSaveType(val type: Type): RegisterNewPurchaseEvent()
     data class setSubStateNoneAndSaveDate(val date: LocalDate): RegisterNewPurchaseEvent()

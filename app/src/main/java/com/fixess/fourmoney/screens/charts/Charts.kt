@@ -62,7 +62,6 @@ fun Charts(chartsViewModel: ChartsViewModel, navController : NavController){
                                     selected = chartsViewState.id == index,
                                     onClick = {
                                         val state = ChartsViewState.getById(index)
-                                        Log.e("state",state.id.toString()+" - "+index.toString())
                                         when(state){
                                             ChartsViewState.Categories -> chartsViewModel.obtainEvent(ChartsEvent.toCategories)// Может показаться запутанном, но выбранно категории -> к категориям
                                             ChartsViewState.Slices -> chartsViewModel.obtainEvent(ChartsEvent.toSlices)
@@ -104,8 +103,7 @@ fun Charts(chartsViewModel: ChartsViewModel, navController : NavController){
                                                 .padding(5.dp)
                                                 .clip(RoundedCornerShape(10.dp))
                                                 .clickable {
-                                                    chartsViewModel.setSelecterPurchase(item)// жоский костыль вроде
-                                                    //chartsViewModel.obtainEvent(ChartsEvent.toPurchase)
+                                                    chartsViewModel.obtainEvent(ChartsEvent.setSelectedPurchase(item))
                                                 }){
                                                 Row(modifier = Modifier
                                                     .padding(6.dp)
@@ -128,8 +126,7 @@ fun Charts(chartsViewModel: ChartsViewModel, navController : NavController){
                                                 .padding(5.dp)
                                                 .clip(CardDefaults.outlinedShape)
                                                 .clickable {
-                                                    chartsViewModel.setSelecterCategory(item)// жоский костыль вроде
-                                                    //chartsViewModel.obtainEvent(ChartsEvent.toCategory)
+                                                    chartsViewModel.obtainEvent(ChartsEvent.setSelectedCategory(item))
                                                 }){
                                                 Row(modifier = Modifier
                                                     .padding(6.dp)
@@ -152,7 +149,11 @@ fun Charts(chartsViewModel: ChartsViewModel, navController : NavController){
                 }
             }
             ChartsSubState.Purchase -> {
-                PurchaseCard(chartsViewModel = chartsViewModel, selectedSlice = viewState.value.selectedSlice,gson = chartsViewModel.gson)
+                PurchaseCard(
+                    chartsViewModel = chartsViewModel,
+                    selectedSlice = viewState.value.selectedSlice,
+                    gson = chartsViewModel.gson,
+                    onDeletePurchase = {chartsViewModel.obtainEvent(ChartsEvent.deletePurchase(it))})
             }
             ChartsSubState.Category -> {
                 CategoryCard(chartsViewModel = chartsViewModel, selectedCategory = viewState.value.selectedCategory)
